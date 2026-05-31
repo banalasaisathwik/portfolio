@@ -1,0 +1,80 @@
+"use client";
+
+import Link from "next/link";
+import { Home, Mail, Sun, Moon } from "lucide-react";
+import { GithubIcon } from "./github-icon";
+import { useTheme } from "next-themes";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { LinkedinIcon } from "./linkedin-icon";
+
+// Custom X (Twitter) Icon since Lucide removed brand icons
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+    </svg>
+  );
+}
+
+export function FloatingDock({ profile }: { profile: any }) {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  return (
+    <motion.div 
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+    >
+      <div className="flex items-center gap-1 px-4 py-3 rounded-full bg-white/70 dark:bg-black/70 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-2xl">
+        
+        <Link href="/" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+          <Home className="w-5 h-5" />
+        </Link>
+
+        <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-800 mx-2" />
+
+        {profile?.github && (
+          <a href={profile.github} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+            <GithubIcon className="w-5 h-5" />
+          </a>
+        )}
+        
+        {profile?.linkedin && (
+          <a href={profile.linkedin} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+           <LinkedinIcon className="w-5 h-5" />
+          </a>
+        )}
+
+        {profile?.xUrl && (
+          <a href={profile.xUrl} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+            <XIcon className="w-4 h-4" />
+          </a>
+        )}
+
+        {profile?.email && (
+          <a href={`mailto:${profile.email}`} className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+            <Mail className="w-5 h-5" />
+          </a>
+        )}
+
+        <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-800 mx-2" />
+
+        <button 
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+        >
+          {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        </button>
+
+      </div>
+    </motion.div>
+  );
+}
