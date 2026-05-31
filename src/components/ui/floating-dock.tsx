@@ -5,8 +5,19 @@ import { Home, Mail, Sun, Moon } from "lucide-react";
 import { GithubIcon } from "./github-icon";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { LinkedinIcon } from "./linkedin-icon";
+
+type DockProfile = {
+  github?: string | null;
+  linkedin?: string | null;
+  xUrl?: string | null;
+  email?: string | null;
+};
+
+const emptySubscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 // Custom X (Twitter) Icon since Lucide removed brand icons
 function XIcon({ className }: { className?: string }) {
@@ -17,12 +28,13 @@ function XIcon({ className }: { className?: string }) {
   );
 }
 
-export function FloatingDock({ profile }: { profile: any }) {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Prevent hydration mismatch
-  useEffect(() => setMounted(true), []);
+export function FloatingDock({ profile }: { profile: DockProfile | null }) {
+  const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
 
   if (!mounted) return null;
 
@@ -68,10 +80,11 @@ export function FloatingDock({ profile }: { profile: any }) {
         <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-800 mx-2" />
 
         <button 
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+          aria-label="Toggle theme"
         >
-          {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          {resolvedTheme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
 
       </div>
