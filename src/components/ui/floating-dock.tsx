@@ -40,39 +40,39 @@ export function FloatingDock({ profile }: { profile: DockProfile | null }) {
 
   return (
     <motion.div 
-      initial={{ y: 100, opacity: 0 }}
+      initial={{ y: 28, opacity: 0, scale: 0.96 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      transition={{ type: "spring", stiffness: 180, damping: 22, mass: 0.8 }}
       className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
     >
-      <div className="flex items-center gap-1 px-4 py-3 rounded-full bg-white/70 dark:bg-black/70 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-2xl">
+      <div className="flex items-center gap-1 px-4 py-3 rounded-full bg-white/75 dark:bg-black/70 backdrop-blur-2xl border border-black/10 dark:border-white/10 shadow-[0_18px_60px_rgba(0,0,0,0.18)] dark:shadow-[0_18px_70px_rgba(0,0,0,0.55)] transition-colors duration-500">
         
-        <Link href="/" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+        <Link href="/" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95">
           <Home className="w-5 h-5" />
         </Link>
 
         <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-800 mx-2" />
 
         {profile?.github && (
-          <a href={profile.github} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+          <a href={profile.github} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95">
             <GithubIcon className="w-5 h-5" />
           </a>
         )}
         
         {profile?.linkedin && (
-          <a href={profile.linkedin} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <a href={profile.linkedin} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95">
            <LinkedinIcon className="w-5 h-5" />
           </a>
         )}
 
         {profile?.xUrl && (
-          <a href={profile.xUrl} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+          <a href={profile.xUrl} target="_blank" rel="noreferrer" className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95">
             <XIcon className="w-4 h-4" />
           </a>
         )}
 
         {profile?.email && (
-          <a href={`mailto:${profile.email}`} className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors">
+          <a href={`mailto:${profile.email}`} className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95">
             <Mail className="w-5 h-5" />
           </a>
         )}
@@ -81,10 +81,18 @@ export function FloatingDock({ profile }: { profile: DockProfile | null }) {
 
         <button 
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-          className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+          className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-all duration-300 ease-out hover:-translate-y-0.5 active:scale-95"
           aria-label="Toggle theme"
         >
-          {resolvedTheme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          <motion.span
+            key={resolvedTheme}
+            initial={{ opacity: 0, rotate: -20, scale: 0.85 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 220, damping: 18 }}
+            className="block"
+          >
+            {resolvedTheme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </motion.span>
         </button>
 
       </div>

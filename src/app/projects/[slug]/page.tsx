@@ -26,7 +26,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       {/* Navigation */}
       <nav className="px-6 py-8 max-w-5xl mx-auto">
         <FadeUp>
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-400 hover:text-foreground dark:hover:text-white transition-colors">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-400 hover:text-foreground dark:hover:text-white transition-all duration-300 ease-out hover:-translate-x-0.5">
             <ArrowLeft className="w-4 h-4" /> Back to Home
           </Link>
         </FadeUp>
@@ -35,7 +35,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       {/* Header (Hero) */}
       <header className="px-6 max-w-5xl mx-auto mb-16">
         <FadeUp delay={0.1}>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">{project.title}</h1>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-b from-foreground via-foreground to-zinc-500 dark:from-white dark:via-zinc-200 dark:to-zinc-500 bg-clip-text text-transparent">{project.title}</h1>
         </FadeUp>
         <FadeUp delay={0.2}>
           <p className="text-xl text-zinc-700 dark:text-zinc-400 mb-8 leading-relaxed max-w-3xl">
@@ -50,7 +50,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {project.githubUrl && (
               <HoverCard openDelay={50} closeDelay={50}>
                 <HoverCardTrigger asChild>
-                  <a href={project.githubUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2.5 bg-card dark:bg-zinc-900 hover:bg-muted dark:hover:bg-zinc-800 rounded-full text-sm font-medium transition-colors border border-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700">
+                  <a href={project.githubUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2.5 bg-card dark:bg-zinc-900 hover:bg-muted dark:hover:bg-zinc-800 rounded-full text-sm font-medium transition-all duration-300 ease-out border border-border dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 hover:-translate-y-0.5 active:scale-95">
                     <GithubIcon className="w-4 h-4" /> View Source
                   </a>
                 </HoverCardTrigger>
@@ -67,7 +67,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {project.liveUrl && (
               <HoverCard openDelay={50} closeDelay={50}>
                 <HoverCardTrigger asChild>
-                  <a href={project.liveUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2.5 bg-foreground text-background hover:bg-foreground/90 rounded-full text-sm font-medium transition-colors shadow-lg shadow-foreground/10">
+                  <a href={project.liveUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2.5 bg-foreground text-background hover:bg-foreground/90 rounded-full text-sm font-medium transition-all duration-300 ease-out shadow-lg shadow-foreground/10 hover:-translate-y-0.5 active:scale-95">
                     <ExternalLink className="w-4 h-4" /> Live Deployment
                   </a>
                 </HoverCardTrigger>
@@ -99,7 +99,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <div className="shrink-0 w-[calc((100vw-64rem)/2)] hidden xl:block" />
               
               {project.architectures.map((arch) => (
-                <div key={arch.id} className="shrink-0 w-[85vw] md:w-[700px] snap-center rounded-xl bg-card dark:bg-zinc-950 border border-border dark:border-zinc-800 overflow-hidden flex flex-col shadow-2xl">
+                <div key={arch.id} className="group shrink-0 w-[85vw] md:w-[700px] snap-center rounded-xl bg-card dark:bg-zinc-950 border border-border dark:border-zinc-800 overflow-hidden flex flex-col shadow-[0_18px_70px_rgba(15,23,42,0.10)] dark:shadow-2xl transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(15,23,42,0.16)]">
                   
                   {/* Engineered Image Container with Blueprint Grid */}
                   <div className="relative p-8 flex-grow flex items-center justify-center min-h-[350px] md:min-h-[450px] border-b border-border dark:border-zinc-800 bg-zinc-50 dark:bg-[#09090b] overflow-hidden">
@@ -108,7 +108,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     <img 
                       src={arch.imageUrl} 
                       alt={arch.title} 
-                      className="relative z-10 w-full h-full object-contain drop-shadow-2xl max-h-[400px]" 
+                      className="relative z-10 w-full h-full object-contain drop-shadow-2xl max-h-[400px] transition-transform duration-700 ease-out group-hover:scale-[1.015]" 
                     />
                   </div>
                   
@@ -120,7 +120,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     {arch.videoUrl && (
                       <HoverCard openDelay={50} closeDelay={50}>
                         <HoverCardTrigger asChild>
-                          <a href={arch.videoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 mt-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 rounded-full text-sm font-medium transition-all duration-150 border border-blue-500/20 hover:border-blue-500/50">
+                          <a href={arch.videoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 mt-2 bg-blue-500/10 text-blue-500 dark:text-blue-400 hover:bg-blue-500/20 hover:text-blue-600 dark:hover:text-blue-300 rounded-full text-sm font-medium transition-all duration-300 ease-out border border-blue-500/20 hover:border-blue-500/50 hover:-translate-y-0.5 active:scale-95">
                             <PlayCircle className="w-4 h-4" /> Watch explanation
                           </a>
                         </HoverCardTrigger>

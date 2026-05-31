@@ -28,7 +28,7 @@ export default async function HomePage() {
           </h2>
         </FadeUp>
         <FadeUp delay={0.1}>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-foreground to-zinc-500 dark:from-white dark:to-zinc-500 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4 bg-gradient-to-b from-foreground via-foreground to-zinc-500 dark:from-white dark:via-zinc-200 dark:to-zinc-500 bg-clip-text text-transparent">
             Hi, I&apos;m <br /> B. Sai Sathwik.
           </h1>
         </FadeUp>
@@ -51,7 +51,7 @@ export default async function HomePage() {
               // Inline motion for snappy bubble entrance
               <span
                 key={skill}
-                className="px-4 py-2 bg-muted dark:bg-zinc-900 border border-border dark:border-zinc-800 rounded-full text-sm font-medium text-zinc-800 dark:text-zinc-300 hover:text-foreground dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors duration-150 cursor-default"
+                className="px-4 py-2 bg-muted dark:bg-zinc-900 border border-border dark:border-zinc-800 rounded-full text-sm font-medium text-zinc-800 dark:text-zinc-300 hover:text-foreground dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-600 transition-all duration-300 ease-out hover:-translate-y-0.5 cursor-default"
               >
                 {skill}
               </span>
@@ -77,9 +77,9 @@ export default async function HomePage() {
               return (
                 <StaggerItem key={project.id}>
                   {/* Reduced transition duration to 150ms for instant hover response */}
-                  <div className="group relative flex flex-col h-full rounded-xl bg-card dark:bg-zinc-900 border border-border dark:border-zinc-800 p-6 hover:bg-muted/70 dark:hover:bg-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all duration-150 ease-out shadow-lg hover:shadow-2xl dark:hover:shadow-black/50">
+                  <div className="group relative flex flex-col h-full rounded-xl bg-card dark:bg-zinc-900 border border-border dark:border-zinc-800 p-6 hover:bg-muted/70 dark:hover:bg-zinc-800/80 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all duration-500 ease-out shadow-sm hover:shadow-[0_18px_55px_rgba(15,23,42,0.12)] dark:hover:shadow-black/50 hover:-translate-y-1">
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="text-xl font-bold text-foreground dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-150">
+                      <h4 className="text-xl font-bold text-foreground dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                         <Link href={`/projects/${project.slug}`} className="before:absolute before:inset-0 z-10">
                           {project.title}
                         </Link>
@@ -89,7 +89,7 @@ export default async function HomePage() {
                         {project.githubUrl && (
                           <HoverCard openDelay={50} closeDelay={50}>
                             <HoverCardTrigger asChild>
-                              <a href={project.githubUrl} target="_blank" rel="noreferrer" className="hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-150">
+                              <a href={project.githubUrl} target="_blank" rel="noreferrer" className="hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-300 ease-out">
                                 <GithubIcon className="w-5 h-5" />
                               </a>
                             </HoverCardTrigger>
@@ -105,7 +105,7 @@ export default async function HomePage() {
                         {project.liveUrl && (
                           <HoverCard openDelay={50} closeDelay={50}>
                             <HoverCardTrigger asChild>
-                              <a href={project.liveUrl} target="_blank" rel="noreferrer" className="hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-150">
+                              <a href={project.liveUrl} target="_blank" rel="noreferrer" className="hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-300 ease-out">
                                 <ExternalLink className="w-5 h-5" />
                               </a>
                             </HoverCardTrigger>
@@ -120,7 +120,7 @@ export default async function HomePage() {
                         {hasVideo && (
                           <HoverCard openDelay={50} closeDelay={50}>
                             <HoverCardTrigger asChild>
-                              <Link href={`/projects/${project.slug}`} className="cursor-pointer text-zinc-700 dark:text-zinc-300 hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-150">
+                              <Link href={`/projects/${project.slug}`} className="cursor-pointer text-zinc-700 dark:text-zinc-300 hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-300 ease-out">
                                 <PlayCircle className="w-5 h-5" />
                               </Link>
                             </HoverCardTrigger>
@@ -168,10 +168,10 @@ export default async function HomePage() {
                 return (
                   <div 
                     key={project.id} 
-                    className="group relative flex flex-col md:flex-row md:items-center justify-between py-5 border-b border-border dark:border-zinc-900 hover:bg-muted/70 dark:hover:bg-zinc-900 transition-colors duration-150 px-4 -mx-4 rounded-lg"
+                    className="group relative flex flex-col md:flex-row md:items-center justify-between py-5 border-b border-border dark:border-zinc-900 hover:bg-muted/70 dark:hover:bg-zinc-900 transition-all duration-500 ease-out px-4 -mx-4 rounded-lg hover:translate-x-1"
                   >
                     <div className="mb-4 md:mb-0 max-w-xl pr-4">
-                      <h4 className="text-lg font-medium text-foreground dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-150">
+                      <h4 className="text-lg font-medium text-foreground dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                         <Link href={`/projects/${project.slug}`} className="before:absolute before:inset-0 z-10">
                           {project.title}
                         </Link>
@@ -187,7 +187,7 @@ export default async function HomePage() {
                         {project.githubUrl && (
                           <HoverCard openDelay={50} closeDelay={50}>
                             <HoverCardTrigger asChild>
-                              <a href={project.githubUrl} target="_blank" rel="noreferrer" className="hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-150"><GithubIcon className="w-4 h-4" /></a>
+                              <a href={project.githubUrl} target="_blank" rel="noreferrer" className="hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-300 ease-out"><GithubIcon className="w-4 h-4" /></a>
                             </HoverCardTrigger>
                             <HoverCardContent side="top" className="w-64 bg-popover dark:bg-zinc-950 border-border dark:border-zinc-800 p-3 shadow-xl rounded-xl animate-in zoom-in-95 duration-100"><p className="text-xs text-zinc-700 dark:text-zinc-300">View source code on GitHub.</p></HoverCardContent>
                           </HoverCard>
@@ -195,7 +195,7 @@ export default async function HomePage() {
                         {project.liveUrl && (
                           <HoverCard openDelay={50} closeDelay={50}>
                             <HoverCardTrigger asChild>
-                              <a href={project.liveUrl} target="_blank" rel="noreferrer" className="hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-150"><ExternalLink className="w-4 h-4" /></a>
+                              <a href={project.liveUrl} target="_blank" rel="noreferrer" className="hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-300 ease-out"><ExternalLink className="w-4 h-4" /></a>
                             </HoverCardTrigger>
                             <HoverCardContent side="top" className="w-64 bg-popover dark:bg-zinc-950 border-border dark:border-zinc-800 p-3 shadow-xl rounded-xl animate-in zoom-in-95 duration-100"><p className="text-xs text-zinc-700 dark:text-zinc-300">Interact with deployed system.</p></HoverCardContent>
                           </HoverCard>
@@ -203,7 +203,7 @@ export default async function HomePage() {
                         {hasVideo && (
                           <HoverCard openDelay={50} closeDelay={50}>
                             <HoverCardTrigger asChild>
-                              <Link href={`/projects/${project.slug}`} className="cursor-pointer text-zinc-700 dark:text-zinc-300 hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-150"><PlayCircle className="w-4 h-4" /></Link>
+                              <Link href={`/projects/${project.slug}`} className="cursor-pointer text-zinc-700 dark:text-zinc-300 hover:text-foreground dark:hover:text-white hover:scale-110 transition-all duration-300 ease-out"><PlayCircle className="w-4 h-4" /></Link>
                             </HoverCardTrigger>
                             <HoverCardContent side="top" className="w-64 bg-popover dark:bg-zinc-950 border-border dark:border-zinc-800 p-3 shadow-xl rounded-xl animate-in zoom-in-95 duration-100"><p className="text-xs text-zinc-700 dark:text-zinc-300">Contains architecture video.</p></HoverCardContent>
                           </HoverCard>
@@ -217,7 +217,7 @@ export default async function HomePage() {
                           </span>
                         ))}
                       </div>
-                      <ArrowRight className="w-4 h-4 text-zinc-700 dark:text-zinc-700 group-hover:text-foreground dark:group-hover:text-white transition-colors duration-150 group-hover:translate-x-1 z-20 relative pointer-events-none" />
+                      <ArrowRight className="w-4 h-4 text-zinc-700 dark:text-zinc-700 group-hover:text-foreground dark:group-hover:text-white transition-all duration-300 ease-out group-hover:translate-x-1 z-20 relative pointer-events-none" />
                     </div>
                   </div>
                 );
@@ -235,7 +235,7 @@ export default async function HomePage() {
             <p className="text-lg text-zinc-700 dark:text-zinc-400 mb-8">
               Always open to discussing deep tech, real-time web architecture, and highly scalable systems.
             </p>
-            <a href="mailto:your.email@example.com" className="inline-block bg-foreground text-background px-6 py-3 rounded-full font-semibold hover:scale-105 active:scale-95 transition-transform duration-150 relative z-20">
+            <a href="mailto:your.email@example.com" className="inline-block bg-foreground text-background px-6 py-3 rounded-full font-semibold hover:scale-[1.03] active:scale-95 transition-transform duration-300 ease-out relative z-20 shadow-lg shadow-foreground/10">
               Open to Collaborate
             </a>
           </div>
