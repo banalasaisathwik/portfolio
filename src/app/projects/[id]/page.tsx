@@ -10,15 +10,40 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+function getCanvaEmbedUrl(value: string | null) {
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+    const isCanvaHost = url.hostname === "canva.com" || url.hostname.endsWith(".canva.com");
+
+    if (url.protocol !== "https:" || !isCanvaHost || !url.pathname.includes("/design/")) {
+      return null;
+    }
+
+    if (!url.searchParams.has("embed")) {
+      url.searchParams.set("embed", "");
+    }
+
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
 
   const project = await prisma.project.findUnique({
-    where: { slug: resolvedParams.slug },
+    where: { id: resolvedParams.id },
     include: { architectures: true }, 
   });
 
   if (!project) notFound();
+
+  const canvaEmbedUrl = project.showCanvaEmbed
+    ? getCanvaEmbedUrl(project.canvaEmbedUrl)
+    : null;
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-foreground selection:text-background pb-24 overflow-x-hidden">
@@ -37,16 +62,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <FadeUp delay={0.1}>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-b from-foreground via-foreground to-zinc-500 dark:from-white dark:via-zinc-200 dark:to-zinc-500 bg-clip-text text-transparent">{project.title}</h1>
         </FadeUp>
-        <FadeUp delay={0.2}>
-          <p className="text-xl text-zinc-700 dark:text-zinc-400 mb-8 leading-relaxed max-w-3xl">
-            {project.overview}
-          </p>
-        </FadeUp>
 
-        <FadeUp delay={0.3}>
-          <div className="flex flex-wrap gap-4 items-center">
-            
-            {/* GitHub Button with Hover Popup */}
+        {(project.githubUrl || project.liveUrl) && (
+          <FadeUp delay={0.2}>
+            <div className="flex flex-wrap gap-4 items-center mb-10">
             {project.githubUrl && (
               <HoverCard openDelay={50} closeDelay={50}>
                 <HoverCardTrigger asChild>
@@ -63,7 +82,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </HoverCard>
             )}
 
-            {/* Live Deployment Button with Hover Popup */}
             {project.liveUrl && (
               <HoverCard openDelay={50} closeDelay={50}>
                 <HoverCardTrigger asChild>
@@ -83,12 +101,35 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 </HoverCardContent>
               </HoverCard>
             )}
-          </div>
-        </FadeUp>
+            </div>
+          </FadeUp>
+        )}
+
+        {canvaEmbedUrl && (
+          <FadeUp delay={0.3}>
+            <div className="relative w-full aspect-video mb-10 overflow-hidden rounded-xl border border-border dark:border-zinc-800 bg-card dark:bg-zinc-950 shadow-[0_18px_70px_rgba(15,23,42,0.10)] dark:shadow-2xl">
+              <iframe
+                src={canvaEmbedUrl}
+                title={`${project.title} architecture presentation`}
+                loading="lazy"
+                allow="fullscreen"
+                allowFullScreen
+                className="absolute inset-0 h-full w-full"
+              />
+            </div>
+          </FadeUp>
+        )}
+        {project.showOverview && (
+          <FadeUp delay={canvaEmbedUrl ? 0.4 : 0.3}>
+            <p className="text-xl text-zinc-700 dark:text-zinc-400 mb-8 leading-relaxed max-w-3xl whitespace-pre-wrap">
+              {project.overview}
+            </p>
+          </FadeUp>
+        )}
       </header>
 
       {/* Horizontal Scroll Architecture Gallery */}
-      {project.architectures.length > 0 && (
+      {project.showArchitecture && project.architectures.length > 0 && (
         <section className="mb-24">
           <FadeUp delay={0.4}>
             <div className="px-6 max-w-5xl mx-auto mb-6">
@@ -117,7 +158,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     <p className="text-zinc-700 dark:text-zinc-400 text-sm mb-4">{arch.description}</p>
                     
                     {/* Highlighted Video Button with Popup */}
-                    {arch.videoUrl && (
+                    {project.showArchitectureVideo && arch.videoUrl && (
                       <HoverCard openDelay={50} closeDelay={50}>
                         <HoverCardTrigger asChild>
                           <a href={arch.videoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 mt-2 bg-blue-500/10 text-blue-500 dark:text-blue-400 hover:bg-blue-500/20 hover:text-blue-600 dark:hover:text-blue-300 rounded-full text-sm font-medium transition-all duration-300 ease-out border border-blue-500/20 hover:border-blue-500/50 hover:-translate-y-0.5 active:scale-95">
@@ -151,7 +192,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       {/* Detail Sections Container */}
       <div className="px-6 max-w-3xl mx-auto space-y-20">
         
-        {project.engineeringDecisions && (
+        {project.showEngineeringDecisions && project.engineeringDecisions && (
           <FadeUp>
             <section>
               <h2 className="text-2xl font-semibold mb-6 pb-2 border-b border-border dark:border-zinc-900">Engineering Decisions</h2>
@@ -162,7 +203,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </FadeUp>
         )}
 
-        {project.codeWalkthrough && (
+        {project.showCodeWalkthrough && project.codeWalkthrough && (
           <FadeUp>
             <section>
               <h2 className="text-2xl font-semibold mb-6 pb-2 border-b border-border dark:border-zinc-900">Code Walkthrough</h2>
@@ -173,7 +214,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </FadeUp>
         )}
 
-        {project.lessonsLearned && (
+        {project.showLessonsLearned && project.lessonsLearned && (
           <FadeUp>
             <section>
               <h2 className="text-2xl font-semibold mb-6 pb-2 border-b border-border dark:border-zinc-900">Lessons Learned</h2>

@@ -3,7 +3,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { deleteProject } from "./actions";
-import { Edit2, Trash2, ExternalLink } from "lucide-react";
+import { Edit2, Trash2, ExternalLink, UserRoundPen } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
   const projects = await prisma.project.findMany({
@@ -17,9 +19,16 @@ export default async function AdminDashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
           <p className="text-zinc-700 dark:text-zinc-400 mt-1">Manage your engineering portfolio.</p>
         </div>
-        <Link href="/admin/projects/new">
-          <Button className="bg-foreground text-background hover:bg-foreground/90">+ New Project</Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/settings">
+            <Button variant="outline">
+              <UserRoundPen className="w-4 h-4 mr-2" /> Edit Profile
+            </Button>
+          </Link>
+          <Link href="/admin/projects/new">
+            <Button className="bg-foreground text-background hover:bg-foreground/90">+ New Project</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4">
@@ -42,7 +51,7 @@ export default async function AdminDashboard() {
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <Link href={`/projects/${project.slug}`} target="_blank">
+                  <Link href={`/projects/${project.id}`} target="_blank">
                     <Button variant="ghost" size="sm" className="text-zinc-700 dark:text-zinc-400 hover:text-foreground dark:hover:text-white">
                       <ExternalLink className="w-4 h-4 mr-2" /> View
                     </Button>

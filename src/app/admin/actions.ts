@@ -3,78 +3,52 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { writeFile } from "fs/promises";
-import path from "path";
 
-// Helper function to handle local file uploads
-async function processArchitectures(formData: FormData) {
-  const archTitles = formData.getAll("arch_title") as string[];
-  const archDescriptions = formData.getAll("arch_description") as string[];
-  const archVideoUrls = formData.getAll("arch_videoUrl") as string[];
-  const archFiles = formData.getAll("arch_file") as File[];
-  const archExistingUrls = formData.getAll("arch_existingUrl") as string[];
+function createArchitectureFromLoom(formData: FormData, projectTitle: string) {
+  const loomVideoUrl = (formData.get("loomVideoUrl") as string | null)?.trim();
 
-  const architectures = [];
+  if (!loomVideoUrl) return [];
 
-  for (let i = 0; i < archTitles.length; i++) {
-    let imageUrl = archExistingUrls[i] || "";
-    const file = archFiles[i];
-
-    // If a new file was uploaded, save it to the public folder
-    if (file && file.size > 0) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      // Clean the filename to prevent URL issues
-      const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "-")}`;
-      const filePath = path.join(process.cwd(), "public/diagrams", fileName);
-      
-      await writeFile(filePath, buffer);
-      imageUrl = `/diagrams/${fileName}`;
-    }
-
-    if (imageUrl && archTitles[i]) {
-      architectures.push({
-        title: archTitles[i],
-        description: archDescriptions[i] || "",
-        videoUrl: archVideoUrls[i] || null,
-        imageUrl: imageUrl,
-      });
-    }
-  }
-
-  return architectures;
+  return [
+    {
+      title: `${projectTitle} demo walkthrough`,
+      description: "Loom demo walkthrough for the featured project.",
+      videoUrl: loomVideoUrl,
+      imageUrl: "/window.svg",
+    },
+  ];
 }
 
 export async function updateProject(formData: FormData) {
   const id = formData.get("id") as string;
   const title = formData.get("title") as string;
-  const slug = formData.get("slug") as string;
   const shortDescription = formData.get("shortDescription") as string;
-  const overview = formData.get("overview") as string;
-  const engineeringDecisions = formData.get("engineeringDecisions") as string;
-  const codeWalkthrough = formData.get("codeWalkthrough") as string;
-  const lessonsLearned = formData.get("lessonsLearned") as string;
   
   const techStackRaw = formData.get("techStack") as string;
-  const techStack = techStackRaw ? techStackRaw.split(",").map(t => t.trim()) : [];
+  const techStack = techStackRaw
+    ? techStackRaw.split(",").map((t) => t.trim()).filter(Boolean)
+    : [];
 
-  const githubUrl = formData.get("githubUrl") as string;
-  const liveUrl = formData.get("liveUrl") as string;
+  const githubUrl = (formData.get("githubUrl") as string | null)?.trim();
+  const liveUrl = (formData.get("liveUrl") as string | null)?.trim();
+  const canvaEmbedUrl = (formData.get("canvaEmbedUrl") as string | null)?.trim();
   const featured = formData.get("featured") === "on";
 
-  // Process the uploaded SVGs
-  const parsedArchitectures = await processArchitectures(formData);
+  const parsedArchitectures = createArchitectureFromLoom(formData, title);
 
   await prisma.project.update({
     where: { id },
     data: {
-      title, slug, shortDescription, overview,
-      engineeringDecisions: engineeringDecisions || null,
-      codeWalkthrough: codeWalkthrough || null,
-      lessonsLearned: lessonsLearned || null,
-      techStack, githubUrl: githubUrl || null, liveUrl: liveUrl || null, featured,
-      
-      // Wipe old diagrams and replace with the newly submitted ones
+      title,
+      shortDescription,
+      overview: shortDescription,
+      techStack,
+      githubUrl: githubUrl || null,
+      liveUrl: liveUrl || null,
+      canvaEmbedUrl: canvaEmbedUrl || null, featured,
+      showCanvaEmbed: featured && Boolean(canvaEmbedUrl),
+      showArchitecture: featured,
+      showArchitectureVideo: featured && parsedArchitectures.length > 0,
       architectures: {
         deleteMany: {},
         create: parsedArchitectures,
@@ -83,7 +57,7 @@ export async function updateProject(formData: FormData) {
   });
 
   revalidatePath("/");
-  revalidatePath(`/projects/${slug}`);
+  revalidatePath(`/projects/${id}`);
   redirect("/admin");
 }
 
@@ -100,12 +74,31 @@ export async function updateProfile(formData: FormData) {
   const headline = formData.get("headline") as string;
   const bio = formData.get("bio") as string;
   const skillsRaw = formData.get("skills") as string;
-  const skills = skillsRaw ? skillsRaw.split(",").map(s => s.trim()) : [];
+  const skills = skillsRaw
+    ? skillsRaw.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
   const github = formData.get("github") as string;
   const linkedin = formData.get("linkedin") as string;
   const xUrl = formData.get("xUrl") as string;
   const youtube = formData.get("youtube") as string;
   const email = formData.get("email") as string;
+  const experienceRoles = formData.getAll("experience_role") as string[];
+  const experienceCompanies = formData.getAll("experience_company") as string[];
+  const experiencePeriods = formData.getAll("experience_period") as string[];
+  const experienceSummaries = formData.getAll("experience_summary") as string[];
+  const experienceHighlights = formData.getAll("experience_highlights") as string[];
+  const experiences = experienceRoles
+    .map((role, index) => ({
+      role: role.trim(),
+      company: experienceCompanies[index]?.trim() || "",
+      period: experiencePeriods[index]?.trim() || "",
+      summary: experienceSummaries[index]?.trim() || "",
+      highlights: experienceHighlights[index]
+        ? experienceHighlights[index].split(",").map((item) => item.trim()).filter(Boolean)
+        : [],
+      order: index,
+    }))
+    .filter((experience) => experience.role && experience.company);
 
   const existingProfile = await prisma.profile.findFirst();
   if (existingProfile) {
@@ -118,27 +111,46 @@ export async function updateProfile(formData: FormData) {
       data: { name, headline, bio, skills, github, linkedin, xUrl, youtube, email }
     });
   }
+
+  await prisma.experience.deleteMany({});
+  if (experiences.length > 0) {
+    await prisma.experience.createMany({
+      data: experiences,
+    });
+  }
+
   revalidatePath("/", "layout");
+  revalidatePath("/admin/settings");
+  redirect("/admin");
 }
 
-// Ensure createProject is also updated so new projects can have SVGs later
 export async function createProject(formData: FormData) {
   const title = formData.get("title") as string;
-  const slug = formData.get("slug") as string;
   const shortDescription = formData.get("shortDescription") as string;
-  const overview = formData.get("overview") as string;
   const techStackRaw = formData.get("techStack") as string;
-  const techStack = techStackRaw ? techStackRaw.split(",").map(t => t.trim()) : [];
-  const githubUrl = formData.get("githubUrl") as string;
-  const liveUrl = formData.get("liveUrl") as string;
+  const techStack = techStackRaw
+    ? techStackRaw.split(",").map((t) => t.trim()).filter(Boolean)
+    : [];
+  const githubUrl = (formData.get("githubUrl") as string | null)?.trim();
+  const liveUrl = (formData.get("liveUrl") as string | null)?.trim();
+  const canvaEmbedUrl = (formData.get("canvaEmbedUrl") as string | null)?.trim();
   const featured = formData.get("featured") === "on"; 
 
-  const parsedArchitectures = await processArchitectures(formData);
+  const parsedArchitectures = createArchitectureFromLoom(formData, title);
 
   await prisma.project.create({
     data: {
-      title, slug, shortDescription, overview, techStack,
-      githubUrl: githubUrl || null, liveUrl: liveUrl || null, featured,
+      title,
+      slug: slugify(title),
+      shortDescription,
+      overview: shortDescription,
+      techStack,
+      githubUrl: githubUrl || null,
+      liveUrl: liveUrl || null,
+      canvaEmbedUrl: canvaEmbedUrl || null, featured,
+      showCanvaEmbed: featured && Boolean(canvaEmbedUrl),
+      showArchitecture: featured,
+      showArchitectureVideo: featured && parsedArchitectures.length > 0,
       architectures: { create: parsedArchitectures }
     },
   });
@@ -146,4 +158,12 @@ export async function createProject(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/projects");
   redirect("/admin");
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
 }

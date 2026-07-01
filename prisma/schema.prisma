@@ -12,37 +12,44 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model Project {
-  id                   String         @id @default(cuid())
-  title                String
-  slug                 String         @unique
-  shortDescription     String
-  overview             String         @db.Text
-  engineeringDecisions String?        @db.Text
-  codeWalkthrough      String?        @db.Text
-  lessonsLearned       String?        @db.Text
-  githubUrl            String?
-  liveUrl              String?
-  featured             Boolean        @default(false)
-  coverImage           String?
-  techStack            String[]
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  architectures        Architecture[]
+  id                       String         @id @default(cuid())
+  title                    String
+  slug                     String         @unique
+  shortDescription         String
+  overview                 String         @db.Text
+  engineeringDecisions     String?        @db.Text
+  codeWalkthrough          String?        @db.Text
+  lessonsLearned           String?        @db.Text
+  githubUrl                String?
+  liveUrl                  String?
+  canvaEmbedUrl            String?
+  featured                 Boolean        @default(false)
+  showOverview             Boolean        @default(true)
+  showCanvaEmbed           Boolean        @default(true)
+  showArchitecture         Boolean        @default(true)
+  showArchitectureVideo    Boolean        @default(true)
+  showEngineeringDecisions Boolean        @default(true)
+  showCodeWalkthrough      Boolean        @default(true)
+  showLessonsLearned       Boolean        @default(true)
+  coverImage               String?
+  techStack                String[]
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
+  architectures            Architecture[]
 }
 
 model Architecture {
-  id             String   @id @default(cuid())
-  title          String
-  description    String   @db.Text
-  imageUrl       String   
-  excalidrawUrl  String?
-  videoUrl       String?
-  projectId      String
-  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id            String   @id @default(cuid())
+  title         String
+  description   String   @db.Text
+  imageUrl      String
+  excalidrawUrl String?
+  videoUrl      String?
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Article {
@@ -59,18 +66,32 @@ model Article {
 // Add this below your existing Project and Architecture models
 
 model Profile {
-  id        String   @id @default(cuid())
-  name      String   @default("B. Sai Sathwik")
-  headline  String   @default("Software Developer")
-  bio       String
-  skills    String[] 
-  
+  id       String   @id @default(cuid())
+  name     String   @default("B. Sai Sathwik")
+  headline String   @default("Software Developer")
+  bio      String
+  skills   String[]
+
   // Social Links
-  github    String?
-  linkedin  String?
-  xUrl      String?
-  youtube   String?
-  email     String?
+  github   String?
+  linkedin String?
+  xUrl     String?
+  youtube  String?
+  email    String?
 
   updatedAt DateTime @updatedAt
+}
+
+model Experience {
+  id         String   @id @default(cuid())
+  role       String
+  company    String
+  period     String
+  summary    String   @db.Text
+  highlights String[]
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([order])
 }
