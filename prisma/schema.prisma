@@ -1,15 +1,13 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 model Project {
@@ -17,10 +15,10 @@ model Project {
   title                    String
   slug                     String         @unique
   shortDescription         String
-  overview                 String         @db.Text
-  engineeringDecisions     String?        @db.Text
-  codeWalkthrough          String?        @db.Text
-  lessonsLearned           String?        @db.Text
+  overview                 String
+  engineeringDecisions     String?
+  codeWalkthrough          String?
+  lessonsLearned           String?
   githubUrl                String?
   liveUrl                  String?
   canvaEmbedUrl            String?
@@ -33,16 +31,19 @@ model Project {
   showCodeWalkthrough      Boolean        @default(true)
   showLessonsLearned       Boolean        @default(true)
   coverImage               String?
-  techStack                String[]
+  techStack                String         @default("[]")
+  order                    Int            @default(0)
   createdAt                DateTime       @default(now())
   updatedAt                DateTime       @updatedAt
   architectures            Architecture[]
+
+  @@index([order])
 }
 
 model Architecture {
   id            String   @id @default(cuid())
   title         String
-  description   String   @db.Text
+  description   String
   imageUrl      String
   excalidrawUrl String?
   videoUrl      String?
@@ -57,7 +58,7 @@ model Article {
   title     String
   slug      String   @unique
   excerpt   String
-  content   String   @db.Text
+  content   String
   published Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -70,7 +71,7 @@ model Profile {
   name     String   @default("B. Sai Sathwik")
   headline String   @default("Software Developer")
   bio      String
-  skills   String[]
+  skills   String   @default("[]")
 
   // Social Links
   github   String?
@@ -87,8 +88,8 @@ model Experience {
   role       String
   company    String
   period     String
-  summary    String   @db.Text
-  highlights String[]
+  summary    String
+  highlights String   @default("[]")
   order      Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

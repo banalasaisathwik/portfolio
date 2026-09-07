@@ -1,25 +1,23 @@
-import { PrismaClient } from '../generated/prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaClient } from "../generated/prisma/client";
 
-// 1. Ensure the connection string exists
-const connectionString = process.env.DATABASE_URL
+const databaseUrl = process.env.DATABASE_URL || "file:./dev.db";
+const sqliteUrl =
+  databaseUrl === "file:./dev.db" ? "file:./prisma/dev.db" : databaseUrl;
+const adapter = new PrismaBetterSqlite3({ url: sqliteUrl });
 
-if (!connectionString) {
-  throw new Error("DATABASE_URL is missing in environment variables.")
-}
-
-// 2. Initialize the Prisma Postgres Adapter
-const adapter = new PrismaPg({ 
-  connectionString 
-})
-
-// 3. Attach the adapter to the Prisma Client
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    adapter,
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
 }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
-
-export default prisma
+export default prisma;

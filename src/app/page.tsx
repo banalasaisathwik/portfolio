@@ -1,4 +1,5 @@
 import { SinglePagePortfolio } from "@/components/home/single-page-portfolio";
+import { parseList } from "@/lib/list-fields";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -6,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const [projects, profile, experiences] = await Promise.all([
     prisma.project.findMany({
-      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      orderBy: [{ featured: "desc" }, { order: "asc" }],
       include: {
         architectures: {
           orderBy: { createdAt: "asc" },
@@ -16,6 +17,7 @@ export default async function HomePage() {
             description: true,
             imageUrl: true,
             videoUrl: true,
+            excalidrawUrl: true,
           },
         },
       },
@@ -28,9 +30,22 @@ export default async function HomePage() {
 
   return (
     <SinglePagePortfolio
-      projects={projects}
-      profile={profile}
-      experiences={experiences}
+      projects={projects.map((project) => ({
+        ...project,
+        techStack: parseList(project.techStack),
+      }))}
+      profile={
+        profile
+          ? {
+              ...profile,
+              skills: parseList(profile.skills),
+            }
+          : null
+      }
+      experiences={experiences.map((experience) => ({
+        ...experience,
+        highlights: parseList(experience.highlights),
+      }))}
     />
   );
 }

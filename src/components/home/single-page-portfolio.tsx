@@ -14,6 +14,7 @@ import {
   Play,
   Presentation,
   Sparkles,
+  Workflow,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +54,7 @@ type Project = {
     description: string;
     imageUrl: string;
     videoUrl: string | null;
+    excalidrawUrl: string | null;
   }[];
 };
 
@@ -142,7 +144,7 @@ export function SinglePagePortfolio({
         id="home"
         className="mx-auto flex w-full max-w-[720px] flex-col px-5 pb-4 pt-24 sm:px-8 md:max-w-[1180px] md:pb-8 lg:pt-32"
       >
-        <div className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div id="about" className="max-w-3xl animate-in fade-in slide-in-from-bottom-4 duration-700">
           <Badge
             variant="secondary"
             className="h-8 gap-2 rounded-full border border-violet-100 bg-violet-50 px-4 text-slate-800 shadow-sm"
@@ -309,19 +311,7 @@ export function SinglePagePortfolio({
         </div>
       </section>
 
-      <section
-        id="about"
-        className="mx-auto grid w-full max-w-[720px] gap-4 px-5 py-4 sm:px-8 md:max-w-[1180px] md:py-8 lg:grid-cols-[1fr_0.9fr]"
-      >
-        <div className="hidden rounded-2xl border border-slate-200 bg-white/82 p-7 shadow-sm md:block">
-          <p className="text-sm font-semibold text-violet-600">About</p>
-          <h2 className="mt-3 max-w-xl text-3xl font-semibold tracking-tight">
-            Building AI systems with backend discipline.
-          </h2>
-          <p className="mt-4 max-w-2xl text-base leading-8 text-slate-600">
-            {bio}
-          </p>
-        </div>
+      <section className="mx-auto w-full max-w-[720px] px-5 py-4 sm:px-8 md:max-w-[1180px] md:py-8">
         <ContactCard
           email={email}
           github={profile?.github}
@@ -396,9 +386,9 @@ function ExperienceSection({ experiences }: { experiences: Experience[] }) {
             <p className="text-sm font-semibold text-violet-600">
               Experience
             </p>
-            <h2 className="text-2xl font-semibold tracking-tight">
+            {/* <h2 className="text-2xl font-semibold tracking-tight">
               Work experience
-            </h2>
+            </h2> */}
           </div>
         </div>
 
@@ -559,6 +549,17 @@ function EmbedFrame({
 }
 
 function SimpleProjectCard({ project }: { project: Project }) {
+  // NOTE: a project can have multiple `architectures` entries (e.g. one per
+  // subsystem), but this compact card only has room for a single link, so we
+  // surface the first entry's Excalidraw canvas. If projects start using more
+  // than one architecture diagram each, this card should either show one link
+  // per entry or link out to the project detail page's architecture gallery
+  // instead of picking `[0]` here.
+  const architectureUrl = project.architectures[0]?.excalidrawUrl ?? null;
+  const explanationUrl = project.canvaEmbedUrl
+    ? getCanvaEmbedUrl(project.canvaEmbedUrl)
+    : null;
+
   return (
     <article className="rounded-2xl border border-slate-200 bg-white/86 p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
       <h3 className="font-serif text-xl font-semibold leading-tight text-slate-950">
@@ -572,6 +573,42 @@ function SimpleProjectCard({ project }: { project: Project }) {
           <SmallTech key={tech} label={tech} />
         ))}
       </div>
+      {project.githubUrl || project.liveUrl || explanationUrl || architectureUrl ? (
+        <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+          {project.githubUrl ? (
+            <Button asChild variant="outline" size="sm" className="h-8 rounded-lg bg-white px-2.5 text-xs">
+              <a href={project.githubUrl} target="_blank" rel="noreferrer">
+                <GithubIcon className="mr-1.5 size-3.5" />
+                Code
+              </a>
+            </Button>
+          ) : null}
+          {project.liveUrl ? (
+            <Button asChild variant="outline" size="sm" className="h-8 rounded-lg bg-white px-2.5 text-xs">
+              <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                Live
+                <ExternalLink className="ml-1.5 size-3.5" />
+              </a>
+            </Button>
+          ) : null}
+          {explanationUrl ? (
+            <Button asChild variant="outline" size="sm" className="h-8 rounded-lg bg-white px-2.5 text-xs">
+              <a href={explanationUrl} target="_blank" rel="noreferrer">
+                <FileText className="mr-1.5 size-3.5" />
+                Explanation
+              </a>
+            </Button>
+          ) : null}
+          {architectureUrl ? (
+            <Button asChild variant="outline" size="sm" className="h-8 rounded-lg bg-white px-2.5 text-xs">
+              <a href={architectureUrl} target="_blank" rel="noreferrer">
+                <Workflow className="mr-1.5 size-3.5" />
+                Architecture
+              </a>
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
     </article>
   );
 }
@@ -604,7 +641,7 @@ function ContactCard({
           </p>
         </div>
       </div>
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <Button asChild variant="outline" className="h-11 rounded-xl bg-white">
           <a href={`mailto:${email}`}>
             <Mail className="mr-2 size-4" />

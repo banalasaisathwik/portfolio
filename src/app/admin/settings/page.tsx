@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { parseList } from "@/lib/list-fields";
 import { updateProfile } from "../actions";
 import ProfileSettingsForm from "./profile-settings-form";
 
@@ -16,19 +17,27 @@ export default async function ProfileSettingsPage() {
     <ProfileSettingsForm
       action={updateProfile}
       profile={
-        profile || {
-          name: "B. Sai Sathwik",
-          headline: "Software Developer",
-          bio: "",
-          skills: ["Next.js", "WebRTC", "PyTorch"],
-          github: "",
-          linkedin: "",
-          xUrl: "",
-          youtube: "",
-          email: "",
-        }
+        profile
+          ? {
+              ...profile,
+              skills: parseList(profile.skills),
+            }
+          : {
+              name: "B. Sai Sathwik",
+              headline: "Software Developer",
+              bio: "",
+              skills: ["Next.js", "WebRTC", "PyTorch"],
+              github: "",
+              linkedin: "",
+              xUrl: "",
+              youtube: "",
+              email: "",
+            }
       }
-      experiences={experiences}
+      experiences={experiences.map((experience) => ({
+        ...experience,
+        highlights: parseList(experience.highlights),
+      }))}
     />
   );
 }

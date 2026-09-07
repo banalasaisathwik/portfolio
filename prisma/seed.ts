@@ -1,4 +1,5 @@
 import { prisma } from "../src/lib/prisma"
+import { stringifyList } from "../src/lib/list-fields"
 
 async function main() {
   console.log("Cleaning database...")
@@ -20,7 +21,8 @@ async function main() {
       githubUrl: 'https://github.com/example/webrtc-node',
       liveUrl: 'https://video.example.com',
       featured: true, // Will show as a giant card
-      techStack: ['WebRTC', 'Mediasoup', 'TypeScript', 'Node.js', 'Next.js'],
+      order: 0,
+      techStack: stringifyList(['WebRTC', 'Mediasoup', 'TypeScript', 'Node.js', 'Next.js']),
       architectures: {
         create: [
           {
@@ -49,7 +51,8 @@ async function main() {
       lessonsLearned: 'Memory fragmentation becomes a severe bottleneck when rapidly reshaping tensors without pre-allocating contiguous memory blocks.',
       githubUrl: 'https://github.com/example/tensor-ops',
       featured: true, // Will show as a giant card
-      techStack: ['PyTorch', 'Python', 'CUDA', 'C++'],
+      order: 1,
+      techStack: stringifyList(['PyTorch', 'Python', 'CUDA', 'C++']),
     },
   })
 
@@ -64,7 +67,8 @@ async function main() {
       overview: 'Built a streaming architecture to process incoming telemetry data, aggregate it in memory, and flush to persistent storage in optimized batches to prevent I/O blocking.',
       githubUrl: 'https://github.com/example/analytics',
       featured: false, // Will show in the sleek list
-      techStack: ['Go', 'Kafka', 'PostgreSQL', 'Redis'],
+      order: 0,
+      techStack: stringifyList(['Go', 'Kafka', 'PostgreSQL', 'Redis']),
     },
   })
 
@@ -76,7 +80,8 @@ async function main() {
       shortDescription: 'A centralized authentication microservice utilizing stateless JWT validation and Redis token blocklisting.',
       overview: 'Designed a security perimeter for microservices. Handled edge-based token verification to offload cryptographic compute costs from downstream internal services.',
       featured: false, // Will show in the sleek list
-      techStack: ['Rust', 'Redis', 'Docker', 'gRPC'],
+      order: 1,
+      techStack: stringifyList(['Rust', 'Redis', 'Docker', 'gRPC']),
     },
   })
 
@@ -88,7 +93,8 @@ async function main() {
       shortDescription: 'Unified data graph stitching together five disparate REST subgraphs into a single queryable endpoint.',
       overview: 'Implemented Apollo Federation to allow frontend teams to query complex relational data without writing N+1 waterfall requests to the underlying legacy microservices.',
       featured: false, // Will show in the sleek list
-      techStack: ['GraphQL', 'Apollo Node', 'TypeScript', 'Express'],
+      order: 2,
+      techStack: stringifyList(['GraphQL', 'Apollo Node', 'TypeScript', 'Express']),
     },
   })
 

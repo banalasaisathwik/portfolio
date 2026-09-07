@@ -1,3 +1,0 @@
-ALTER TABLE "Project"
-ADD COLUMN "canvaEmbedUrl" TEXT,
-ADD COLUMN "showCanvaEmbed" BOOLEAN NOT NULL DEFAULT true;

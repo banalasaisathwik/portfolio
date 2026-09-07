@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Architecture, Project } from "@/generated/prisma/browser";
+import { parseList } from "@/lib/list-fields";
 
 type EditableArchitecture = Pick<Architecture, "videoUrl">;
 type EditableProject = Project & { architectures: EditableArchitecture[] };
@@ -48,7 +49,7 @@ export default function EditProjectForm({
           <Input
             id="techStack"
             name="techStack"
-            defaultValue={project.techStack.join(", ")}
+            defaultValue={parseList(project.techStack).join(", ")}
           />
           <p className="text-xs text-muted-foreground">
             Separate each technology with a comma.

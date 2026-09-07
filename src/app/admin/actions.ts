@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { stringifyList } from "@/lib/list-fields";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -42,7 +43,7 @@ export async function updateProject(formData: FormData) {
       title,
       shortDescription,
       overview: shortDescription,
-      techStack,
+      techStack: stringifyList(techStack),
       githubUrl: githubUrl || null,
       liveUrl: liveUrl || null,
       canvaEmbedUrl: canvaEmbedUrl || null, featured,
@@ -59,6 +60,19 @@ export async function updateProject(formData: FormData) {
   revalidatePath("/");
   revalidatePath(`/projects/${id}`);
   redirect("/admin");
+}
+
+export async function updateProjectOrder(
+  updates: { id: string; order: number }[],
+) {
+  await prisma.$transaction(
+    updates.map(({ id, order }) =>
+      prisma.project.update({ where: { id }, data: { order } }),
+    ),
+  );
+
+  revalidatePath("/");
+  revalidatePath("/admin");
 }
 
 export async function deleteProject(formData: FormData) {
@@ -93,9 +107,9 @@ export async function updateProfile(formData: FormData) {
       company: experienceCompanies[index]?.trim() || "",
       period: experiencePeriods[index]?.trim() || "",
       summary: experienceSummaries[index]?.trim() || "",
-      highlights: experienceHighlights[index]
+      highlights: stringifyList(experienceHighlights[index]
         ? experienceHighlights[index].split(",").map((item) => item.trim()).filter(Boolean)
-        : [],
+        : []),
       order: index,
     }))
     .filter((experience) => experience.role && experience.company);
@@ -104,11 +118,11 @@ export async function updateProfile(formData: FormData) {
   if (existingProfile) {
     await prisma.profile.update({
       where: { id: existingProfile.id },
-      data: { name, headline, bio, skills, github, linkedin, xUrl, youtube, email }
+      data: { name, headline, bio, skills: stringifyList(skills), github, linkedin, xUrl, youtube, email }
     });
   } else {
     await prisma.profile.create({
-      data: { name, headline, bio, skills, github, linkedin, xUrl, youtube, email }
+      data: { name, headline, bio, skills: stringifyList(skills), github, linkedin, xUrl, youtube, email }
     });
   }
 
@@ -138,16 +152,19 @@ export async function createProject(formData: FormData) {
 
   const parsedArchitectures = createArchitectureFromLoom(formData, title);
 
+  const projectCount = await prisma.project.count({ where: { featured } });
+
   await prisma.project.create({
     data: {
       title,
       slug: slugify(title),
       shortDescription,
       overview: shortDescription,
-      techStack,
+      techStack: stringifyList(techStack),
       githubUrl: githubUrl || null,
       liveUrl: liveUrl || null,
       canvaEmbedUrl: canvaEmbedUrl || null, featured,
+      order: projectCount,
       showCanvaEmbed: featured && Boolean(canvaEmbedUrl),
       showArchitecture: featured,
       showArchitectureVideo: featured && parsedArchitectures.length > 0,
