@@ -95,6 +95,15 @@ export default function NewProjectPage() {
                 placeholder="https://www.canva.com/design/.../view?embed"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="excalidrawUrl">Architecture Diagram URL (Excalidraw)</Label>
+              <Input
+                id="excalidrawUrl"
+                name="excalidrawUrl"
+                type="url"
+                placeholder="https://excalidraw.com/#json=..."
+              />
+            </div>
           </div>
         </div>
 

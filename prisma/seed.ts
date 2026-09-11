@@ -19,7 +19,7 @@ async function main() {
       engineeringDecisions: 'Chose Mediasoup over standard SFU architectures to maintain granular control over the router transports. Implemented WebRTC data channels for low-latency chat and state synchronization alongside the media tracks.',
       codeWalkthrough: 'The core complexity lies in track management when participants leave the session. The `closeTransport` routine ensures memory is freed on the server instantly to prevent memory leaks during high-volume cohort sessions.',
       githubUrl: 'https://github.com/example/webrtc-node',
-      liveUrl: 'https://video.example.com',
+      liveUrl: 'https://webrtc-conferencing.example.com',
       featured: true, // Will show as a giant card
       order: 0,
       techStack: stringifyList(['WebRTC', 'Mediasoup', 'TypeScript', 'Node.js', 'Next.js']),
@@ -28,8 +28,9 @@ async function main() {
           {
             title: 'Transport Layer State Flow',
             description: 'Mapping the sequence of SDP negotiations between the client device and the Mediasoup worker.',
-            imageUrl: 'https://raw.githubusercontent.com/excalidraw/excalidraw/master/public/apple-touch-icon.png', 
-            videoUrl: 'https://youtube.com', 
+            imageUrl: 'https://raw.githubusercontent.com/excalidraw/excalidraw/master/public/apple-touch-icon.png',
+            videoUrl: 'https://youtube.com',
+            excalidrawUrl: 'https://excalidraw.com/#json=example-transport-layer',
           },
           {
             title: 'Participant Lifecycle',

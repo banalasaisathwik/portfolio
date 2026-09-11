@@ -162,7 +162,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                       <HoverCard openDelay={50} closeDelay={50}>
                         <HoverCardTrigger asChild>
                           <a href={arch.videoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-4 py-2 mt-2 bg-blue-500/10 text-blue-500 dark:text-blue-400 hover:bg-blue-500/20 hover:text-blue-600 dark:hover:text-blue-300 rounded-full text-sm font-medium transition-all duration-300 ease-out border border-blue-500/20 hover:border-blue-500/50 hover:-translate-y-0.5 active:scale-95">
-                            <PlayCircle className="w-4 h-4" /> Watch explanation
+                            <PlayCircle className="w-4 h-4" /> Watch demo video
                           </a>
                         </HoverCardTrigger>
                         <HoverCardContent side="top" className="w-64 bg-popover dark:bg-zinc-950 border-border dark:border-zinc-800 p-4 shadow-2xl dark:shadow-black rounded-xl animate-in zoom-in-95 duration-100">
@@ -173,7 +173,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                             <div>
                               <h4 className="text-sm font-semibold text-popover-foreground dark:text-white">Video Walkthrough</h4>
                               <p className="text-xs text-zinc-700 dark:text-zinc-400 mt-1">
-                                Watch a detailed explanation of this specific system diagram.
+                                Watch a demo walkthrough of this specific system diagram.
                               </p>
                             </div>
                           </div>

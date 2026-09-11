@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import type { Architecture, Project } from "@/generated/prisma/browser";
 import { parseList } from "@/lib/list-fields";
 
-type EditableArchitecture = Pick<Architecture, "videoUrl">;
+type EditableArchitecture = Pick<Architecture, "videoUrl" | "excalidrawUrl">;
 type EditableProject = Project & { architectures: EditableArchitecture[] };
 
 export default function EditProjectForm({
@@ -19,6 +19,9 @@ export default function EditProjectForm({
   const loomVideoUrl =
     project.architectures.find((architecture) => architecture.videoUrl)
       ?.videoUrl ?? "";
+  const excalidrawUrl =
+    project.architectures.find((architecture) => architecture.excalidrawUrl)
+      ?.excalidrawUrl ?? "";
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12 text-foreground">
@@ -107,6 +110,16 @@ export default function EditProjectForm({
                 type="url"
                 defaultValue={project.canvaEmbedUrl || ""}
                 placeholder="https://www.canva.com/design/.../view?embed"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="excalidrawUrl">Architecture Diagram URL (Excalidraw)</Label>
+              <Input
+                id="excalidrawUrl"
+                name="excalidrawUrl"
+                type="url"
+                defaultValue={excalidrawUrl}
+                placeholder="https://excalidraw.com/#json=..."
               />
             </div>
           </div>

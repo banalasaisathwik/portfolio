@@ -551,11 +551,12 @@ function EmbedFrame({
 function SimpleProjectCard({ project }: { project: Project }) {
   // NOTE: a project can have multiple `architectures` entries (e.g. one per
   // subsystem), but this compact card only has room for a single link, so we
-  // surface the first entry's Excalidraw canvas. If projects start using more
-  // than one architecture diagram each, this card should either show one link
-  // per entry or link out to the project detail page's architecture gallery
-  // instead of picking `[0]` here.
+  // surface the first entry's Excalidraw canvas and demo video. If projects
+  // start using more than one architecture diagram each, this card should
+  // either show one link per entry or link out to the project detail page's
+  // architecture gallery instead of picking `[0]` here.
   const architectureUrl = project.architectures[0]?.excalidrawUrl ?? null;
+  const demoVideoUrl = project.architectures[0]?.videoUrl ?? null;
   const explanationUrl = project.canvaEmbedUrl
     ? getCanvaEmbedUrl(project.canvaEmbedUrl)
     : null;
@@ -573,7 +574,11 @@ function SimpleProjectCard({ project }: { project: Project }) {
           <SmallTech key={tech} label={tech} />
         ))}
       </div>
-      {project.githubUrl || project.liveUrl || explanationUrl || architectureUrl ? (
+      {project.githubUrl ||
+      project.liveUrl ||
+      demoVideoUrl ||
+      explanationUrl ||
+      architectureUrl ? (
         <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
           {project.githubUrl ? (
             <Button asChild variant="outline" size="sm" className="h-8 rounded-lg bg-white px-2.5 text-xs">
@@ -588,6 +593,14 @@ function SimpleProjectCard({ project }: { project: Project }) {
               <a href={project.liveUrl} target="_blank" rel="noreferrer">
                 Live
                 <ExternalLink className="ml-1.5 size-3.5" />
+              </a>
+            </Button>
+          ) : null}
+          {demoVideoUrl ? (
+            <Button asChild variant="outline" size="sm" className="h-8 rounded-lg bg-white px-2.5 text-xs">
+              <a href={demoVideoUrl} target="_blank" rel="noreferrer">
+                <Play className="mr-1.5 size-3.5" />
+                Live Demo Video
               </a>
             </Button>
           ) : null}

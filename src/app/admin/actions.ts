@@ -5,16 +5,18 @@ import { stringifyList } from "@/lib/list-fields";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-function createArchitectureFromLoom(formData: FormData, projectTitle: string) {
+function buildFeaturedArchitecture(formData: FormData, projectTitle: string) {
   const loomVideoUrl = (formData.get("loomVideoUrl") as string | null)?.trim();
+  const excalidrawUrl = (formData.get("excalidrawUrl") as string | null)?.trim();
 
-  if (!loomVideoUrl) return [];
+  if (!loomVideoUrl && !excalidrawUrl) return [];
 
   return [
     {
-      title: `${projectTitle} demo walkthrough`,
-      description: "Loom demo walkthrough for the featured project.",
-      videoUrl: loomVideoUrl,
+      title: `${projectTitle} architecture`,
+      description: "Architecture diagram and demo walkthrough for the featured project.",
+      videoUrl: loomVideoUrl || null,
+      excalidrawUrl: excalidrawUrl || null,
       imageUrl: "/window.svg",
     },
   ];
@@ -35,7 +37,7 @@ export async function updateProject(formData: FormData) {
   const canvaEmbedUrl = (formData.get("canvaEmbedUrl") as string | null)?.trim();
   const featured = formData.get("featured") === "on";
 
-  const parsedArchitectures = createArchitectureFromLoom(formData, title);
+  const parsedArchitectures = buildFeaturedArchitecture(formData, title);
 
   await prisma.project.update({
     where: { id },
@@ -49,7 +51,7 @@ export async function updateProject(formData: FormData) {
       canvaEmbedUrl: canvaEmbedUrl || null, featured,
       showCanvaEmbed: featured && Boolean(canvaEmbedUrl),
       showArchitecture: featured,
-      showArchitectureVideo: featured && parsedArchitectures.length > 0,
+      showArchitectureVideo: featured && Boolean(parsedArchitectures[0]?.videoUrl),
       architectures: {
         deleteMany: {},
         create: parsedArchitectures,
@@ -150,7 +152,7 @@ export async function createProject(formData: FormData) {
   const canvaEmbedUrl = (formData.get("canvaEmbedUrl") as string | null)?.trim();
   const featured = formData.get("featured") === "on"; 
 
-  const parsedArchitectures = createArchitectureFromLoom(formData, title);
+  const parsedArchitectures = buildFeaturedArchitecture(formData, title);
 
   const projectCount = await prisma.project.count({ where: { featured } });
 
@@ -167,7 +169,7 @@ export async function createProject(formData: FormData) {
       order: projectCount,
       showCanvaEmbed: featured && Boolean(canvaEmbedUrl),
       showArchitecture: featured,
-      showArchitectureVideo: featured && parsedArchitectures.length > 0,
+      showArchitectureVideo: featured && Boolean(parsedArchitectures[0]?.videoUrl),
       architectures: { create: parsedArchitectures }
     },
   });
