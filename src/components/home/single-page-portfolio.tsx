@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { Download, ExternalLink, FileText, Mail, Play, Video } from "lucide-react";
+import { ExternalLink, Eye, FileText, Mail, Play, Video } from "lucide-react";
 import { GithubIcon } from "@/components/ui/github-icon";
 import { LinkedinIcon } from "@/components/ui/linkedin-icon";
 import styles from "./single-page-portfolio.module.css";
@@ -113,7 +113,7 @@ export function SinglePagePortfolio({ projects, profile, experiences }: SinglePa
             {profile?.xUrl && <IconLink href={profile.xUrl} label="X" icon={<span className={styles.xIcon} aria-hidden="true" />} />}
             {profile?.youtube && <IconLink href={profile.youtube} label="YouTube" icon={<Video />} />}
             {email && <IconLink href={`mailto:${email}`} label="Email" icon={<Mail />} />}
-            <IconLink href={resumeUrl} label="Resume" icon={<Download />} />
+            <IconLink href={resumeUrl} label="Resume" icon={<Eye />} />
           </div>
         </div>
       </header>
