@@ -30,7 +30,7 @@
 .hero h1 { max-width: 630px; margin: 0 0 10px; font: 700 clamp(1.9rem, 4.6vw, 2.65rem)/1.25 var(--mono); letter-spacing: -.045em; overflow-wrap: anywhere; }
 .subtitle { max-width: 620px; margin: 0 0 19px; font-size: 18px; line-height: 1.6; }
 .socialLinks { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 24px; }
-.iconLink { display: inline-flex; align-items: center; gap: 9px; padding: 3px 0; font-size: 14px; line-height: 1.4; }
+.iconLink { display: inline-flex; align-items: center; gap: 9px; padding: 3px 0; font-family: var(--sans); font-size: 14px; line-height: 1.4; }
 .iconLink svg { width: 18px; height: 18px; }
 .iconLink span:not(.xIcon) { position: relative; padding-bottom: 3px; }
 .iconLink span:not(.xIcon)::after { position: absolute; right: 0; bottom: 0; left: 0; height: 1px; background: #8c9e76; content: ""; transition: background .2s, transform .2s; transform-origin: left; }
@@ -86,10 +86,6 @@
 .projectLink svg { width: 14px; height: 14px; }
 
 .footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 47px; padding-top: 18px; border-top: 1px solid var(--line); color: #858a94; font: 11px/1.5 var(--mono); }
-.printButton { display: inline-flex; align-items: center; gap: 7px; padding: 5px 0; border: 0; background: none; color: var(--muted); cursor: pointer; font: 11px/1.5 var(--mono); }
-.printButton svg { width: 14px; height: 14px; }
-.printButton:hover { color: var(--green); }
-
 .heroCopy > * { animation: enter .6s cubic-bezier(.2, .8, .2, 1) both; }
 .heroCopy > :nth-child(2) { animation-delay: .07s; }
 .heroCopy > :nth-child(3) { animation-delay: .14s; }
@@ -142,7 +138,6 @@
   .projectBody p { font-size: 13px; }
   .projectLink { font-size: 11px; }
   .footer { margin-top: 34px; font-size: 10px; }
-  .printButton { font-size: 10px; }
 }
 @media (max-width: 360px) {
   .page { padding-left: 23px; padding-right: 23px; }
@@ -161,7 +156,7 @@
   .page { max-width: none; min-height: 0; padding: 0; font-size: 11px; }
   .hero { margin-bottom: 24px; }
   .section { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .gridArt, .signature, .printButton { display: none; }
+  .gridArt, .signature { display: none; }
   .heroCopy > * { animation: none; }
   .overline { margin-bottom: 8px; font-size: 10px; }
   .hero h1 { font-size: 25px; }

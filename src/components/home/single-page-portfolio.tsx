@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { Download, ExternalLink, FileText, Mail, Play, Printer, Video } from "lucide-react";
+import { Download, ExternalLink, FileText, Mail, Play, Video } from "lucide-react";
 import { GithubIcon } from "@/components/ui/github-icon";
 import { LinkedinIcon } from "@/components/ui/linkedin-icon";
 import styles from "./single-page-portfolio.module.css";
@@ -91,6 +91,9 @@ export function SinglePagePortfolio({ projects, profile, experiences }: SinglePa
   const aboutText = bio.slice(positioning.length).trim() || bio;
   const skills = profile?.skills ?? [];
   const email = profile?.email?.trim();
+  const orderedExperiences = [...experiences].sort(
+    (first, second) => getPeriodStart(second.period) - getPeriodStart(first.period),
+  );
 
   return (
     <div className={styles.canvas}>
@@ -110,7 +113,7 @@ export function SinglePagePortfolio({ projects, profile, experiences }: SinglePa
             {profile?.xUrl && <IconLink href={profile.xUrl} label="X" icon={<span className={styles.xIcon} aria-hidden="true" />} />}
             {profile?.youtube && <IconLink href={profile.youtube} label="YouTube" icon={<Video />} />}
             {email && <IconLink href={`mailto:${email}`} label="Email" icon={<Mail />} />}
-            <IconLink href={resumeUrl} label="Résumé" icon={<Download />} />
+            <IconLink href={resumeUrl} label="Resume" icon={<Download />} />
           </div>
         </div>
       </header>
@@ -124,7 +127,7 @@ export function SinglePagePortfolio({ projects, profile, experiences }: SinglePa
         <section id="experience" className={styles.section} data-reveal aria-labelledby="experience-title">
           <SectionTitle id="experience-title">Experience</SectionTitle>
           <div className={styles.timeline}>
-            {experiences.map((experience) => (
+            {orderedExperiences.map((experience) => (
               <article className={styles.timelineEntry} key={experience.id}>
                 <div className={styles.timelineDate}>{experience.period}</div>
                 <div className={styles.timelineBody}>
@@ -161,9 +164,6 @@ export function SinglePagePortfolio({ projects, profile, experiences }: SinglePa
 
       <footer className={styles.footer}>
         <span>© {new Date().getFullYear()} {name}</span>
-        <button type="button" className={styles.printButton} onClick={() => window.print()}>
-          <Printer aria-hidden="true" /> Print résumé
-        </button>
       </footer>
     </main>
     </div>
@@ -222,6 +222,21 @@ function ProjectEntry({ project, number }: { project: Project; number: number })
 
 function ProjectLink({ href, label, icon }: { href: string; label: string; icon: ReactNode }) {
   return <a className={styles.projectLink} href={href} target="_blank" rel="noopener noreferrer">{icon}{label}</a>;
+}
+
+function getPeriodStart(period: string) {
+  const months = [
+    "jan", "feb", "mar", "apr", "may", "jun",
+    "jul", "aug", "sep", "oct", "nov", "dec",
+  ];
+  const monthMatch = period.match(/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?\s+(\d{4})/i);
+  if (monthMatch) {
+    const monthIndex = months.findIndex((month) => month === monthMatch[1].slice(0, 3).toLowerCase());
+    return Number(monthMatch[2]) * 12 + monthIndex;
+  }
+
+  const year = period.match(/\b\d{4}\b/);
+  return year ? Number(year[0]) * 12 : Number.NEGATIVE_INFINITY;
 }
 
 function getCanvaEmbedUrl(url: string) {
